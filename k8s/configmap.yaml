@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: demo-app
+data:
+  db_host: "mysql-service.demo-app.svc.cluster.local"
+  db_name: "demo_db"
+  config_value: "This value is from ConfigMap on EC2"
+  app_environment: "production"
+  app_version: "1.0.0"

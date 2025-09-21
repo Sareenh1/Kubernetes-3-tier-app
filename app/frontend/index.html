@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>K8s Demo App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .healthy { background-color: #d4edda; color: #155724; }
+        .unhealthy { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Kubernetes Demo App on EC2</h1>
+        <div id="data">
+            <p>Loading data from backend...</p>
+        </div>
+        <div id="dns-test">
+            <h3>DNS Resolution Test:</h3>
+            <p id="dns-status">Testing DNS...</p>
+        </div>
+    </div>
+
+    <script>
+        // Test DNS resolution by fetching from backend service
+        async function testDNS() {
+            try {
+                const response = await fetch('http://backend-service.demo-app.svc.cluster.local:8080/api/data');
+                const data = await response.json();
+                
+                document.getElementById('data').innerHTML = 
+                    `<div class="status ${data.db_status === 'Connected' ? 'healthy' : 'unhealthy'}">
+                        <h3>Application Status</h3>
+                        <p><strong>Message:</strong> ${data.message}</p>
+                        <p><strong>Database Status:</strong> ${data.db_status}</p>
+                        <p><strong>Config Value:</strong> ${data.config_value}</p>
+                        <p><strong>Timestamp:</strong> ${data.timestamp}</p>
+                    </div>`;
+                
+                document.getElementById('dns-status').innerHTML = 
+                    `<span class="healthy">✓ DNS resolution successful! Service discovered via: backend-service.demo-app.svc.cluster.local</span>`;
+                    
+            } catch (error) {
+                document.getElementById('data').innerHTML = 
+                    `<div class="status unhealthy">
+                        <h3>Error</h3>
+                        <p>Failed to connect to backend: ${error.message}</p>
+                    </div>`;
+                document.getElementById('dns-status').innerHTML = 
+                    `<span class="unhealthy">✗ DNS resolution failed: ${error.message}</span>`;
+            }
+        }
+
+        testDNS();
+        setInterval(testDNS, 5000); // Refresh every 5 seconds
+    </script>
+</body>
+</html>
