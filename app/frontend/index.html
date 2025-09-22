@@ -26,7 +26,7 @@
         // Test DNS resolution by fetching from backend service
         async function testDNS() {
             try {
-                const response = await fetch('http://backend-service.demo-app.svc.cluster.local:8080/api/data');
+                const response = await fetch('/api/api/data');
                 const data = await response.json();
                 
                 document.getElementById('data').innerHTML = 
